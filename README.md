@@ -50,6 +50,13 @@ perSystem = { pkgs, config, ... }: {
 
 The `imports` list and the `inputsFrom` list mirror each other. Pick the Zig version once, in the import.
 
+The flake sets no `nixConfig`, so a repo does not ask you to trust a cache when you enter it. To use the org's caches, add them to your own Nix configuration:
+
+```
+extra-substituters = https://baskingspot.cachix.org https://mattrobenolt.cachix.org
+extra-trusted-public-keys = baskingspot.cachix.org-1:4KDZc1xfJdL8VGAOZo1SkOgZlqMNH+thBzux9J66EjU= mattrobenolt.cachix.org-1:sn1IDSC4OxQvWaOVD4RRcqyKlket5wgb11nd1QII6i8=
+```
+
 `ziglint` and `zigdoc` come from [mattware](https://github.com/mattrobenolt/nixpkgs), which this flake pins. Your `nixpkgs` stays your own pin.
 
 ## Work on it
