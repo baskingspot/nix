@@ -29,6 +29,7 @@
 
       flake.flakeModules = {
         base = baseModule;
+        docs = ./modules/docs.nix;
         shell = ./modules/shell.nix;
         terraform = ./modules/terraform.nix;
         # A version namespace: consumers import zig."0.16" (exactly one).
@@ -40,6 +41,7 @@
 
       imports = [
         baseModule
+        ./modules/docs.nix
         ./modules/shell.nix
         ./modules/terraform.nix
       ];
@@ -48,7 +50,11 @@
         { pkgs, config, ... }:
         {
           devShells.default = pkgs.mkShell {
-            inputsFrom = [ config.devShells.base ];
+            inputsFrom = with config.devShells; [
+              base
+              docs
+              shell
+            ];
 
             # Markdown is this repo's own concern. Modules do not carry oxfmt.
             packages = [ pkgs.oxfmt ];

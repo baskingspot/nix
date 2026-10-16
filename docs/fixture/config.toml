@@ -1,0 +1,12 @@
+# A minimal site on the theme. `just test` builds it.
+base_url = "https://baskingspot.dev/fixture"
+title = "fixture"
+description = "A site the theme builds in CI."
+theme = "baskingspot"
+generate_feeds = false
+build_search_index = false
+
+[extra]
+repo = "baskingspot/nix"
+api = true
+third_party = true

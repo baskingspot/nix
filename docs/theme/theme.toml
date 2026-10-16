@@ -1,0 +1,10 @@
+name = "baskingspot"
+description = "The baskingspot docs theme: one-page guides with a contents sidebar, in the org palette."
+license = "MIT"
+min_version = "0.19.0"
+
+[extra]
+# A site sets these under [extra] in its own config.toml:
+#   repo        = "baskingspot/NAME"  # the GitHub link and the license link
+#   api         = true                # show an "API reference" link to api/
+#   third_party = true                # link THIRD_PARTY.md in the footer

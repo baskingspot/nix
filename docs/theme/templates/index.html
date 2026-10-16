@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block layout_class %}{% if section.toc %} has-toc{% endif %}{% endblock %}
+{% block toc %}{% if section.toc %}{% include "toc.html" %}{% endif %}{% endblock %}
+{% block content %}
+{{ section.content | safe }}
+{% endblock %}

@@ -5,11 +5,13 @@
 default:
     @just --list
 
-[doc("Check Nix, Markdown, the justfile, and the workflows")]
+[doc("Check Nix, shell, the theme's CSS, Markdown, the justfile, and the workflows")]
 [group("lint")]
 lint:
     nix fmt -- --ci
-    oxfmt --check README.md AGENTS.md
+    shfmt -d modules/docs-cli.sh
+    shellcheck modules/docs-cli.sh
+    oxfmt --check README.md AGENTS.md docs/README.md docs/theme/static/style.css
     actionlint
     zizmor .
     just --fmt --check
@@ -18,7 +20,8 @@ lint:
 [group("lint")]
 fmt:
     nix fmt
-    oxfmt README.md AGENTS.md
+    shfmt -w modules/docs-cli.sh
+    oxfmt README.md AGENTS.md docs/README.md docs/theme/static/style.css
     just --fmt
 
 [doc("Evaluate every flake output, build every devshell, and run the Nix lint as a flake check")]
@@ -26,9 +29,22 @@ fmt:
 check:
     nix flake check
 
+[doc("Build the fixture site on the docs theme and check its output, the way a library's doc recipe does")]
+[group("test")]
+test-docs:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    out=$(mktemp -d)
+    trap 'rm -rf "$out"' EXIT
+    BASKINGSPOT_DOCS_ROOT=docs/fixture BASKINGSPOT_DOCS_OUT="$out" baskingspot-docs build fixture
+    for f in index.html style.css badge.svg logo.svg social.png; do test -s "$out/fixture/$f"; done
+    grep -q 'href="https://baskingspot.dev/fixture/style.css"' "$out/fixture/index.html"
+    grep -q 'View on GitHub' "$out/fixture/index.html"
+    grep -q 'class="layout has-toc"' "$out/fixture/index.html"
+
 [doc("Everything CI runs")]
 [group("ci")]
-ci: lint check
+ci: lint check test-docs
 
 [doc("Pin every Action to a commit SHA, leaving versions as they are. Needs GITHUB_TOKEN")]
 [group("actions")]
