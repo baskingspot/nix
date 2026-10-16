@@ -22,6 +22,7 @@ The flake is the tool contract. `nix develop` provides every tool, and the `.env
 - A module that needs only nixpkgs is exported as a plain path.
 - A toolchain is a version namespace: `zig."0.16"`. The module takes `version`, maps it to the nixpkgs attribute suffix, and sets `devShells.zig`. A consumer imports exactly one, and two versions conflict on that attribute. That conflict is the intended failure. Add a version by adding an entry to the namespace in `flake.nix`.
 - A module carries only the tools of its own language or concern. `oxfmt` is in none of them. A repo that formats Markdown adds `oxfmt` to its own `packages`, or a future `docs` module supplies it.
+- A tool that lives in a language ecosystem runs through that ecosystem's own toolchain when the repo has its manifest: `uvx` with a `pyproject.toml`, `bunx` or `npx` with a `package.json`. The manifest pins the version. A module never ships `ruff`, `ty`, or JavaScript tooling for that case. The flake carries such a tool only when the repo has no manifest for it.
 - `nix fmt` is for Nix files only. `base` imports the treefmt-nix module and enables `nixfmt`, `statix`, and `deadnix`, and nothing else. No module adds a treefmt program for another language. Every other language is formatted and linted by its own toolchain, from the repo's justfile, so a module only supplies the tools.
 - Only `base` sets `systems`, with `lib.mkDefault`. A consumer can narrow it.
 - Put options under `baskingspot.<name>.*`, and give every option that interpolates `${system}` a `defaultText`.
