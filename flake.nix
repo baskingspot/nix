@@ -29,6 +29,7 @@
 
       flake.flakeModules = {
         base = baseModule;
+        docker = ./modules/docker.nix;
         docs = ./modules/docs.nix;
         shell = ./modules/shell.nix;
         terraform = ./modules/terraform.nix;
@@ -41,6 +42,7 @@
 
       imports = [
         baseModule
+        ./modules/docker.nix
         ./modules/docs.nix
         ./modules/shell.nix
         ./modules/terraform.nix
