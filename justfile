@@ -11,7 +11,7 @@ lint:
     nix fmt -- --ci
     shfmt -d modules/docs-cli.sh
     shellcheck modules/docs-cli.sh
-    oxfmt --check README.md AGENTS.md docs/README.md docs/theme/static/style.css
+    oxfmt --check README.md AGENTS.md docs/README.md docs/theme/static/style.css .github
     actionlint
     zizmor .
     just --fmt --check
@@ -21,7 +21,7 @@ lint:
 fmt:
     nix fmt
     shfmt -w modules/docs-cli.sh
-    oxfmt README.md AGENTS.md docs/README.md docs/theme/static/style.css
+    oxfmt README.md AGENTS.md docs/README.md docs/theme/static/style.css .github
     just --fmt
 
 [doc("Evaluate every flake output, build every devshell, and run the Nix lint as a flake check")]
