@@ -70,3 +70,9 @@ extra-trusted-public-keys = baskingspot.cachix.org-1:4KDZc1xfJdL8VGAOZo1SkOgZlqM
 ## License
 
 MIT. See `LICENSE`. The logo files in `docs/static/` are baskingspot marks and are not covered by it. See `docs/static/LICENSE`.
+
+## How it's made
+
+Built with LLM assistance. [How, in detail](https://github.com/baskingspot/.github/blob/main/docs/AI.md).
+
+<a href="https://github.com/baskingspot"><img src="https://raw.githubusercontent.com/baskingspot/.github/main/brand/assets/badge.svg" alt="baskingspot" height="24"></a>
