@@ -29,6 +29,8 @@
 
       flake.flakeModules = {
         base = baseModule;
+        shell = ./modules/shell.nix;
+        terraform = ./modules/terraform.nix;
         # A version namespace: consumers import zig."0.16" (exactly one).
         zig = {
           "0.16" = zig "0.16";
@@ -36,7 +38,11 @@
         };
       };
 
-      imports = [ baseModule ];
+      imports = [
+        baseModule
+        ./modules/shell.nix
+        ./modules/terraform.nix
+      ];
 
       perSystem =
         { pkgs, config, ... }:

@@ -12,6 +12,8 @@ Every baskingspot repo needs the same flake skeleton and the same tools. This re
 ## Modules
 
 - `base`: the three supported systems, and `nix fmt` through treefmt, for Nix files only. It formats with `nixfmt` and fixes with `statix` and `deadnix`. The devshell has `treefmt`, `just`, `fd`, `gh`, and the workflow tools `actionlint`, `zizmor`, and `pinact`, because every repo is a GitHub repo.
+- `terraform`: OpenTofu and `tflint`. `tofu fmt` formats, and `tflint` and `tofu validate` check.
+- `shell`: `shellcheck` and `shfmt`. Shell scripts are always checked.
 - `zig`: Zig, the matching `zls`, `ziglint`, and `zigdoc`. It is a version namespace with `0.16` and `0.17`. Import exactly one. Zig 0.17 has no `zls` in nixpkgs yet, so its shell has none until nixpkgs adds `zls_0_17`.
 
 ## Lint
