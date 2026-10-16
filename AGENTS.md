@@ -1,0 +1,37 @@
+# AGENTS.md
+
+Working notes for AI coding agents in baskingspot/nix.
+
+## What this is
+
+Shared flake-parts modules for every baskingspot repo. A module here is copied into the flake of each library, so it has to be a pattern worth copying.
+
+## Environment
+
+The flake is the tool contract. `nix develop` provides every tool, and the `.envrc` loads it through direnv. The justfile is the command interface. Run `just fmt` before you commit, and `just ci` to run what CI runs.
+
+## Layout
+
+- `flake.nix` exports `flakeModules` and `templates`, and owns this repo's own devshell.
+- `modules/<name>.nix` is one module. Each adds one `devShells.<name>`.
+- `templates/zig-library/` is the flake a new Zig library starts from.
+
+## Writing a module
+
+- A module that needs this flake's own inputs, such as `mattware`, takes them as a first argument: `{ mattware }: { ... }: { ... }`. Export it with `importApply`. Without it, `inputs` inside the module means the consumer's inputs, and `mattware` is not there.
+- A module that needs only nixpkgs is exported as a plain path.
+- A toolchain is a version namespace: `zig."0.16"`. The module takes `version`, maps it to the nixpkgs attribute suffix, and sets `devShells.zig`. A consumer imports exactly one, and two versions conflict on that attribute. That conflict is the intended failure. Add a version by adding an entry to the namespace in `flake.nix`.
+- A module carries only the tools of its own language or concern. `oxfmt` is in none of them. A repo that formats Markdown adds `oxfmt` to its own `packages`, or a future `docs` module supplies it.
+- `nix fmt` is for Nix files only. `base` imports the treefmt-nix module and enables `nixfmt`, `statix`, and `deadnix`, and nothing else. No module adds a treefmt program for another language. Every other language is formatted and linted by its own toolchain, from the repo's justfile, so a module only supplies the tools.
+- Only `base` sets `systems`, with `lib.mkDefault`. A consumer can narrow it.
+- Put options under `baskingspot.<name>.*`, and give every option that interpolates `${system}` a `defaultText`.
+- `inputsFrom` does not carry `env` or `shellHook` into the consumer's shell. A tool that needs either gets its own shell, or an option the consumer applies.
+- Consumers pin their own `nixpkgs`. Never make a consumer follow this flake's nixpkgs for them.
+
+## Conventions
+
+- Recipes carry a `[doc("...")]` directive and a `[group("...")]`. Format Nix with `nix fmt`, never `nixfmt` directly.
+- Commit messages are one line, `area: summary`. Every commit is signed. Do not rewrite pushed history.
+- Pin every `uses:` by SHA with a version comment. `just pin` pins a new one and `just update` moves them all. The runner label is pinned too, in any workflow that sets one.
+- The maintenance job in `gh-actions` runs `nix flake update` here every week. Do not bump inputs by hand without a reason.
+- Public text follows the voice guide in the `.github` repo, `docs/VOICE.md`.
