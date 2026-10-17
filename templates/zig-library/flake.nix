@@ -27,8 +27,8 @@
               zig
             ];
 
-            # oxfmt formats the Markdown and the workflows. Add project tools after it.
-            packages = with pkgs; [ oxfmt ];
+            # Project-specific tools.
+            packages = with pkgs; [ ];
           };
         };
     };

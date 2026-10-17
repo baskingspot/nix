@@ -57,9 +57,6 @@
               docs
               shell
             ];
-
-            # Markdown is this repo's own concern. Modules do not carry oxfmt.
-            packages = [ pkgs.oxfmt ];
           };
         };
     };

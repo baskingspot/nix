@@ -29,12 +29,14 @@
 
       # Every repo is a GitHub repo, so the workflow tools are here too. The
       # repo's justfile runs actionlint and zizmor, and pins with pinact.
+      # oxfmt formats the Markdown and the workflow YAML in every repo's lint.
       devShells.base = pkgs.mkShell {
         packages = with pkgs; [
           actionlint
           fd
           gh
           just
+          oxfmt
           pinact
           ripgrep
           zizmor

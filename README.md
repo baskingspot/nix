@@ -11,7 +11,7 @@ Every baskingspot repo needs the same flake skeleton and the same tools. This re
 
 ## Modules
 
-- `base`: the three supported systems, and `nix fmt` through treefmt, for Nix files only. It formats with `nixfmt` and fixes with `statix` and `deadnix`. The devshell has `treefmt`, `just`, `fd`, `gh`, and the workflow tools `actionlint`, `zizmor`, and `pinact`, because every repo is a GitHub repo.
+- `base`: the three supported systems, and `nix fmt` through treefmt, for Nix files only. It formats with `nixfmt` and fixes with `statix` and `deadnix`. The devshell has `treefmt`, `just`, `fd`, `gh`, `oxfmt` (it formats the Markdown and the workflows in every repo's lint), and the workflow tools `actionlint`, `zizmor`, and `pinact`, because every repo is a GitHub repo.
 - `terraform`: OpenTofu and `tflint`. `tofu fmt` formats, and `tflint` and `tofu validate` check.
 - `shell`: `shellcheck` and `shfmt`. Shell scripts are always checked.
 - `docker`: the Docker CLI with buildx, and `hadolint`. Dockerfiles are always checked. The daemon is not in the shell.
