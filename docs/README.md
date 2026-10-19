@@ -27,7 +27,7 @@ The theme owns `style.css`, `badge.svg`, and the templates. A file of the same n
 
 `[extra]` in `docs/config.toml` takes `repo = "baskingspot/NAME"` for the GitHub and license links, `api = true` for an "API reference" link to `api/`, `third_party = true` for a link to `THIRD_PARTY.md`, `license = "Apache-2.0"` when the repo is not MIT, and `changelog = false` to hide the changelog link. The footer defaults to MIT.
 
-The repository's root `CHANGELOG.md` is copied into the site as `/NAME/changelog/` for the build and removed afterwards, so the changelog is written once and the site shows it.
+The repository's root `CHANGELOG.md` is copied into the site as `/NAME/changelog/` for the build and removed afterwards, so the changelog is written once and the site shows it. The copy drops the Keep a Changelog preamble, drops an `Unreleased` section with no entries, and turns each `## [X.Y.Z] - DATE` heading into a link to `releases/tag/vX.Y.Z`.
 
 Add `docs/themes/` to `.gitignore`. It holds a link the command makes.
 
