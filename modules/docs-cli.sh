@@ -67,6 +67,20 @@ twin() {
 	' "$1"
 }
 
+# The repository's CHANGELOG.md is one file, and the site shows it as a page.
+# Zola reads only its content root, so the file is copied in for the build and
+# removed after; a failed build leaves it behind, and the trap clears it.
+changelog() {
+	src=$(dirname "$root")/CHANGELOG.md
+	[ -f "$src" ] || return 0
+	dst=$root/content/changelog.md
+	{
+		printf '+++\ntitle = "Changelog"\ntemplate = "page.html"\n+++\n\n'
+		cat "$src"
+	} >"$dst"
+	trap 'rm -f "$dst"' EXIT
+}
+
 # Zola builds HTML only, so every page is copied to the path of its URL with
 # index.md in place of index.html. The router serves that file when a request
 # asks for markdown. A shortcode is not expanded in a copy, so it is a warning
@@ -96,6 +110,7 @@ ln -sfn "$BASKINGSPOT_DOCS_THEME" "$root/themes/baskingspot"
 
 case $command in
 build)
+	changelog
 	zola --root "$root" build --base-url "https://baskingspot.dev/$slug" --output-dir "$out" --force
 	twins
 	# A page that links to /style.css works at the domain root and breaks under
