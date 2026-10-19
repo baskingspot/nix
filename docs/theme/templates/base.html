@@ -48,7 +48,7 @@
   <footer>
     {% if config.extra.repo %}
     <p>
-      {{ config.title }} is MIT licensed. See the
+      {{ config.title }} is {{ config.extra.license | default(value="MIT") }} licensed. See the
       <a href="https://github.com/{{ config.extra.repo }}/blob/main/LICENSE">license</a>{% if config.extra.third_party %} and the
       <a href="https://github.com/{{ config.extra.repo }}/blob/main/THIRD_PARTY.md">third-party notices</a>{% endif %}.
     </p>

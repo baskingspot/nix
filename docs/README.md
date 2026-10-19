@@ -25,11 +25,11 @@ The repo owns its content and its marks:
 
 The theme owns `style.css`, `badge.svg`, and the templates. A file of the same name in the repo wins, so a repo can override a template. Don't copy the theme's CSS.
 
-`[extra]` in `docs/config.toml` takes `repo = "baskingspot/NAME"` for the GitHub and license links, `api = true` for an "API reference" link to `api/`, and `third_party = true` for a link to `THIRD_PARTY.md`.
+`[extra]` in `docs/config.toml` takes `repo = "baskingspot/NAME"` for the GitHub and license links, `api = true` for an "API reference" link to `api/`, `third_party = true` for a link to `THIRD_PARTY.md`, and `license = "Apache-2.0"` when the repo is not MIT. The footer defaults to MIT.
 
 Add `docs/themes/` to `.gitignore`. It holds a link the command makes.
 
-## The markdown twin
+## The markdown copy
 
 `baskingspot-docs build` writes a markdown copy of every page next to the HTML,
 at the path of the page with `index.md` in place of `index.html`. Zola does not
@@ -40,7 +40,7 @@ copy its input, so the command copies `content/` itself, with three changes:
   shortcode and the code is most of what a reader came for,
 - any other shortcode is left as it is, with a warning on stderr.
 
-The router at baskingspot.dev serves the twin when a request asks for markdown.
+The router at baskingspot.dev serves the copy when a request asks for markdown.
 See `baskingspot/site`'s README.
 
 ## Recipes
