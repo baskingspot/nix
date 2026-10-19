@@ -48,6 +48,9 @@ test-docs:
     ! grep -q '^+++$' "$out/fixture/index.md"
     grep -q 'pub const hello = "world";' "$out/fixture/index.md"
     ! grep -q 'load_data' "$out/fixture/index.md"
+    # The twins are a second copy, so the asset layer marks them noindex.
+    test -s "$out/fixture/_headers"
+    grep -q 'X-Robots-Tag: noindex' "$out/fixture/_headers"
 
 [doc("Everything CI runs")]
 [group("ci")]
