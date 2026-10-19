@@ -74,10 +74,9 @@ changelog() {
 	src=$(dirname "$root")/CHANGELOG.md
 	[ -f "$src" ] || return 0
 	dst=$root/content/changelog.md
-	repo=$(awk -F'"' '/^repo = / { print $2; exit }' "$root/config.toml")
 	{
 		printf '+++\ntitle = "Changelog"\ntemplate = "page.html"\n+++\n\n# Changelog\n\n'
-		awk -v repo="$repo" '
+		awk '
 			function flush() {
 				if (in_unreleased && buffer ~ /[^[:space:]]/) {
 					print "## Unreleased"
@@ -92,16 +91,13 @@ changelog() {
 				if ($0 ~ /^## \[Unreleased\]/) { in_unreleased = 1; next }
 				if (match($0, /^## \[[0-9]+\.[0-9]+\.[0-9]+\]/)) {
 					version = substr($0, 5, RLENGTH - 5)
-					rest = substr($0, RLENGTH + 1)
-					if (repo != "")
-						printf "## [%s](https://github.com/%s/releases/tag/v%s)%s\n", version, repo, version, rest
-					else
-						printf "## %s%s\n", version, rest
+					printf "## %s%s\n", version, substr($0, RLENGTH + 1)
+					versions++
 					next
 				}
 			}
 			{ if (!started) next; if (in_unreleased) buffer = buffer $0 "\n"; else print }
-			END { flush() }
+			END { flush(); if (versions == 0) print "No releases yet." }
 		' "$src"
 	} >"$dst"
 	trap 'rm -f "$dst"' EXIT
