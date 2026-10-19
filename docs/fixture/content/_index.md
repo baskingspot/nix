@@ -9,3 +9,7 @@ The body.
 ## Two
 
 See [one](#one).
+
+```zig
+{{ load_data(path="examples/hello.zig", format="plain") | trim_end }}
+```

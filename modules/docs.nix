@@ -15,8 +15,11 @@ _: {
       baskingspotDocs = pkgs.writeShellApplication {
         name = "baskingspot-docs";
         runtimeInputs = with pkgs; [
-          zola
+          coreutils
+          findutils
+          gawk
           gnugrep
+          zola
         ];
         runtimeEnv.BASKINGSPOT_DOCS_THEME = "${../docs/theme}";
         text = builtins.readFile ./docs-cli.sh;

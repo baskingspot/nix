@@ -41,6 +41,13 @@ test-docs:
     grep -q 'href="https://baskingspot.dev/fixture/style.css"' "$out/fixture/index.html"
     grep -q 'View on GitHub' "$out/fixture/index.html"
     grep -q 'class="layout has-toc"' "$out/fixture/index.html"
+    # The markdown twin: an H1 from the title, no TOML frontmatter, and the
+    # load_data example expanded, since a copy cannot render a shortcode.
+    test -s "$out/fixture/index.md"
+    head -1 "$out/fixture/index.md" | grep -qx '# fixture'
+    ! grep -q '^+++$' "$out/fixture/index.md"
+    grep -q 'pub const hello = "world";' "$out/fixture/index.md"
+    ! grep -q 'load_data' "$out/fixture/index.md"
 
 [doc("Everything CI runs")]
 [group("ci")]

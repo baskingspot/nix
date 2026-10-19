@@ -29,6 +29,20 @@ The theme owns `style.css`, `badge.svg`, and the templates. A file of the same n
 
 Add `docs/themes/` to `.gitignore`. It holds a link the command makes.
 
+## The markdown twin
+
+`baskingspot-docs build` writes a markdown copy of every page next to the HTML,
+at the path of the page with `index.md` in place of `index.html`. Zola does not
+copy its input, so the command copies `content/` itself, with three changes:
+
+- the TOML frontmatter becomes an H1 from the `title`,
+- `load_data` is replaced by the file it names, since a copy cannot render a
+  shortcode and the code is most of what a reader came for,
+- any other shortcode is left as it is, with a warning on stderr.
+
+The router at baskingspot.dev serves the twin when a request asks for markdown.
+See `baskingspot/site`'s README.
+
 ## Recipes
 
 ```just
