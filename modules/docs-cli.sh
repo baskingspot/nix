@@ -98,15 +98,6 @@ case $command in
 build)
 	zola --root "$root" build --base-url "https://baskingspot.dev/$slug" --output-dir "$out" --force
 	twins
-	# A twin is a second copy of a page, so it stays out of search indexes. The
-	# router sets this too when it negotiates; this covers a direct fetch of the
-	# `.md` path, which the asset layer answers without the Worker.
-	cat >"$out/_headers" <<'HEADERS'
-# The markdown twins are a second copy of a page. Keep them out of search
-# indexes; the HTML page is the one to find.
-/*.md
-  X-Robots-Tag: noindex, nofollow
-HEADERS
 	# A page that links to /style.css works at the domain root and breaks under
 	# /SLUG/. Zola's own links honor base_url, so a hit here is a hand-written
 	# root-absolute path.
