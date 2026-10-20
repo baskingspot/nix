@@ -36,11 +36,30 @@ test-docs:
     set -euo pipefail
     out=$(mktemp -d)
     trap 'rm -rf "$out"' EXIT
-    BASKINGSPOT_DOCS_ROOT=docs/fixture BASKINGSPOT_DOCS_OUT="$out" baskingspot-docs build fixture
+    # Run the command from the checkout with the theme beside it, not the store
+    # copy the devshell pins: a theme edit, including a new template, has to be
+    # what the fixture builds on.
+    BASKINGSPOT_DOCS_ROOT=docs/fixture BASKINGSPOT_DOCS_OUT="$out" \
+        BASKINGSPOT_DOCS_THEME="$PWD/docs/theme" bash modules/docs-cli.sh build fixture
+    test "$(readlink docs/fixture/themes/baskingspot)" = "$PWD/docs/theme"
+    # Byte for byte, so the CSS the fixture serves is the checkout's theme file.
+    cmp -s docs/theme/static/style.css "$out/fixture/style.css"
     for f in index.html style.css badge.svg logo.svg social.png; do test -s "$out/fixture/$f"; done
     grep -q 'href="https://baskingspot.dev/fixture/style.css"' "$out/fixture/index.html"
     grep -q 'View on GitHub' "$out/fixture/index.html"
     grep -q 'class="layout has-toc"' "$out/fixture/index.html"
+    # The API page: the theme template, the data, and the CSS all have to be in
+    # the output. A root-absolute link would break under /fixture/.
+    api="$out/fixture/api/index.html"
+    test -s "$api"
+    grep -q 'fixture API reference' "$api"
+    grep -q 'Widget.append' "$api"
+    grep -q 'https://github.com/baskingspot/nix/blob/main/src/widget.zig#L21' "$api"
+    ! grep -Eq '(href|src|srcset)="/[^/]' "$api"
+    grep -q 'href="https://baskingspot.dev/fixture/style.css"' "$api"
+    grep -q 'nav.api-nav' "$out/fixture/style.css"
+    # data/ is a Zola input, not a published path.
+    test ! -e "$out/fixture/data/api.json"
     # The markdown twin: an H1 from the title, no TOML frontmatter, and the
     # load_data example expanded, since a copy cannot render a shortcode.
     test -s "$out/fixture/index.md"
@@ -48,6 +67,9 @@ test-docs:
     ! grep -q '^+++$' "$out/fixture/index.md"
     grep -q 'pub const hello = "world";' "$out/fixture/index.md"
     ! grep -q 'load_data' "$out/fixture/index.md"
+    # The API page's only hand-written text is the paragraph the twin keeps.
+    test -s "$out/fixture/api/index.md"
+    grep -q 'generated from' "$out/fixture/api/index.md"
 
 [doc("Everything CI runs")]
 [group("ci")]

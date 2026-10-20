@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "generator": { "name": "docgen", "version": "0.0.0" },
+  "package": {
+    "name": "fixture",
+    "root": "src/root.zig",
+    "repo_url": "https://github.com/baskingspot/nix",
+    "rev": "main"
+  },
+  "module_docs": "The `fixture` package is the theme's sample API reference: enough symbols to exercise the sidebar, the page, and the source links.\n\nIt is not a real library. The [guide](../) explains what the fixture is for.",
+  "symbols": [
+    {
+      "name": "widget",
+      "fqn": "widget",
+      "kind": "module",
+      "depth": 0,
+      "parent": null,
+      "signature": "pub const widget = struct",
+      "docs": "A small widget model used to exercise the renderer.\n\n- `Widget` holds the value.\n- `Widget.Config` holds the knobs.\n- `render` turns a widget into a string.\n\n## What is not here\n\nNo allocator, no threading, no I/O. The fixture exists to make the template's shapes visible, not to do work.",
+      "file": "src/widget.zig",
+      "line": 3
+    },
+    {
+      "name": "Widget",
+      "fqn": "widget.Widget",
+      "kind": "struct",
+      "depth": 1,
+      "parent": "widget",
+      "signature": "pub const Widget = struct { name: []const u8, count: u8 }",
+      "docs": "A value with a name and a count. Both fields are public, so `widget.name` and `widget.count` are the whole interface.",
+      "file": "src/widget.zig",
+      "line": 8
+    },
+    {
+      "name": "init",
+      "fqn": "widget.Widget.init",
+      "kind": "function",
+      "depth": 2,
+      "parent": "widget.Widget",
+      "signature": "pub fn init(name: []const u8) Widget",
+      "docs": "Builds a widget with `count` set to zero. The name is borrowed; the caller keeps it alive.",
+      "file": "src/widget.zig",
+      "line": 14
+    },
+    {
+      "name": "append",
+      "fqn": "widget.Widget.append",
+      "kind": "function",
+      "depth": 2,
+      "parent": "widget.Widget",
+      "signature": "pub fn append(self: *Widget, item: u8) !void",
+      "docs": "Adds `item` to the widget. Returns `error.Full` when the count is already the maximum.\n\n```zig\nvar w = widget.Widget.init(\"demo\");\ntry w.append(1);\n```\n\nA full widget is a caller error, not an allocation failure.",
+      "file": "src/widget.zig",
+      "line": 21
+    },
+    {
+      "name": "Config",
+      "fqn": "widget.Widget.Config",
+      "kind": "struct",
+      "depth": 1,
+      "parent": "widget",
+      "signature": "pub const Config = struct { pretty: bool, indent: u8 }",
+      "docs": "The options `render` reads. Defaults are in `Widget.Config.default`.",
+      "file": "src/widget.zig",
+      "line": 30
+    },
+    {
+      "name": "default",
+      "fqn": "widget.Widget.Config.default",
+      "kind": "constant",
+      "depth": 2,
+      "parent": "widget.Widget.Config",
+      "signature": "pub const default: Config = .{ .pretty = false, .indent = 0 }",
+      "docs": "The zero value: `pretty = false`, `indent = 0`.",
+      "file": "src/widget.zig",
+      "line": 35
+    },
+    {
+      "name": "render",
+      "fqn": "render",
+      "kind": "function",
+      "depth": 0,
+      "parent": null,
+      "signature": "pub fn render(w: Widget, options: Options) []const u8",
+      "docs": "Renders a widget into the caller's buffer. The result is a view, not an allocation; see [Zig](https://ziglang.org/) for the language this sample pretends to be written in.",
+      "file": "src/render.zig",
+      "line": 3
+    },
+    {
+      "name": "Options",
+      "fqn": "render.Options",
+      "kind": "struct",
+      "depth": 1,
+      "parent": "render",
+      "signature": "pub const Options = struct { pretty: bool, indent: u8 }",
+      "docs": "Knobs for `render`. The fields mirror `Widget.Config` so a caller can pass either shape.",
+      "file": "src/render.zig",
+      "line": 12
+    },
+    {
+      "name": "pretty",
+      "fqn": "render.Options.pretty",
+      "kind": "field",
+      "depth": 2,
+      "parent": "render.Options",
+      "signature": "pretty: bool",
+      "docs": "When true, `render` puts each field on its own line.",
+      "file": "src/render.zig",
+      "line": 14
+    },
+    {
+      "name": "VERSION",
+      "fqn": "VERSION",
+      "kind": "constant",
+      "depth": 0,
+      "parent": null,
+      "signature": "pub const VERSION = \"0.0.0\"",
+      "docs": "The fixture version. It changes only when the sample does.",
+      "file": "src/root.zig",
+      "line": 1
+    }
+  ],
+  "diagnostics": []
+}

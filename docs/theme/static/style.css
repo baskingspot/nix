@@ -37,17 +37,20 @@ main {
 }
 
 /* A contents sidebar on wide screens; on narrow ones it flows above the page,
-   with only the chapter titles. */
+   with only the chapter titles. The API page uses the same shape: its symbol
+   list is a second kind of contents sidebar. */
 .layout {
   display: block;
 }
 @media (min-width: 56rem) {
-  .layout.has-toc {
+  .layout.has-toc,
+  .layout.has-api {
     display: grid;
     grid-template-columns: 15rem 1fr;
     gap: 2.5rem;
   }
-  nav.toc {
+  nav.toc,
+  nav.api-nav {
     position: sticky;
     top: 1rem;
     align-self: start;
@@ -56,16 +59,19 @@ main {
   }
 }
 
-nav.toc {
+nav.toc,
+nav.api-nav {
   font-size: 0.9rem;
   padding-top: 1rem;
 }
-nav.toc ul {
+nav.toc ul,
+nav.api-nav ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-nav.toc li {
+nav.toc li,
+nav.api-nav li {
   margin: 0.2rem 0;
 }
 nav.toc > ul > li {
@@ -81,14 +87,148 @@ nav.toc ul ul {
     display: none;
   }
 }
-nav.toc a {
+nav.toc a,
+nav.api-nav a {
   color: var(--muted);
   text-decoration: none;
 }
-nav.toc a:hover {
+nav.toc a:hover,
+nav.api-nav a:hover {
   color: var(--link-hover);
   text-decoration: underline;
   text-decoration-color: var(--heat);
+}
+
+/* The API page. The symbol list is a flat list in document order, indented by
+   depth; it shares the sidebar rules above and adds only its own type. */
+.api-nav-title {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+}
+nav.api-nav li.api-nav-d0 {
+  margin-top: 0.8rem;
+  font-weight: 600;
+}
+li.api-nav-d1 {
+  padding-left: 0.85rem;
+}
+li.api-nav-d2 {
+  padding-left: 1.7rem;
+}
+li.api-nav-d3 {
+  padding-left: 2.55rem;
+}
+li.api-nav-d4 {
+  padding-left: 3.4rem;
+}
+li.api-nav-d5 {
+  padding-left: 4.25rem;
+}
+/* Match nav.toc, which hides sub-entries on narrow screens, so the symbol list
+   does not push the page down. */
+@media (max-width: 55.99rem) {
+  li.api-nav-d2,
+  li.api-nav-d3,
+  li.api-nav-d4,
+  li.api-nav-d5 {
+    display: none;
+  }
+}
+.api-title {
+  margin-bottom: 0.25rem;
+}
+.api-meta {
+  margin: 0 0 1.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.api-warning {
+  padding: 0.6rem 0.75rem;
+  color: var(--fg);
+  background: color-mix(in srgb, var(--heat) 15%, transparent);
+  border-left: 3px solid var(--heat);
+  border-radius: 4px;
+}
+.api-meta a {
+  text-decoration-color: var(--heat);
+}
+.api-intro {
+  margin-bottom: 2.5rem;
+}
+.api-entry {
+  scroll-margin-top: 1rem;
+}
+/* Only the symbol's own heading: docs headings are shifted, and a plain
+   `.api-entry h4` would restyle them as if they were symbol headings. */
+.api-entry > h2 {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  scroll-margin-top: 1rem;
+}
+.api-entry > h3 {
+  margin-top: 2.25rem;
+  scroll-margin-top: 1rem;
+}
+.api-entry > h4 {
+  margin-top: 1.75rem;
+  font-size: 1rem;
+  scroll-margin-top: 1rem;
+}
+.api-docs h2,
+.api-docs h3,
+.api-docs h4,
+.api-docs h5,
+.api-docs h6 {
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  scroll-margin-top: 1rem;
+}
+.api-docs h5,
+.api-docs h6 {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.api-anchor {
+  color: inherit;
+  text-decoration: none;
+}
+.api-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  align-items: baseline;
+  margin: 0.4rem 0 0.6rem;
+}
+.api-kind {
+  padding: 0.1rem 0.4rem;
+  font:
+    0.75rem ui-monospace,
+    monospace;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--surface);
+  border-radius: 4px;
+}
+.api-source {
+  font:
+    0.8rem ui-monospace,
+    monospace;
+  color: var(--muted);
+}
+.api-signature {
+  margin: 0 0 0.75rem;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.85rem;
+  background: var(--surface);
+}
+.api-signature code {
+  padding: 0;
+  background: none;
+}
+.api-docs > :first-child {
+  margin-top: 0;
 }
 
 header {
@@ -137,7 +277,10 @@ a:hover {
 }
 h1,
 h2,
-h3 {
+h3,
+h4,
+h5,
+h6 {
   line-height: 1.25;
   scroll-margin-top: 1rem;
 }
@@ -154,9 +297,21 @@ h1:first-child {
 h2 {
   margin-top: 2.25rem;
 }
+h4 {
+  margin-top: 1.75rem;
+  font-size: 1rem;
+}
+h5,
+h6 {
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+}
 h1 a,
 h2 a,
-h3 a {
+h3 a,
+h4 a,
+h5 a,
+h6 a {
   color: inherit;
   text-decoration: none;
 }
@@ -171,9 +326,11 @@ pre {
   padding: 0.9rem 1rem;
   overflow-x: auto;
   border-radius: 6px;
+  background-color: var(--surface);
 }
 /* Zola writes the highlight theme's background into each pre. Put the page's
-   surface under the code instead. The token colors stay the theme's. */
+   surface under the code instead. The token colors stay the theme's. The
+   markdown filter emits a bare pre, which the rule above already paints. */
 pre.giallo {
   background-color: var(--surface) !important;
 }

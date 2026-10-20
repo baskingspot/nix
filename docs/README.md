@@ -20,6 +20,8 @@ The repo owns its content and its marks:
 | ------------------------ | -------------------------------------------------------------------------------------- |
 | `docs/config.toml`       | `theme = "baskingspot"`, the title and description, and `[extra]` (below)              |
 | `docs/content/_index.md` | The guide. Its headings become the contents sidebar                                    |
+| `docs/content/api.md`    | The API page entry: `template = "api.html"`, a title, and a short body                 |
+| `docs/data/api.json`     | The docgen document for that page, schema version 1                                    |
 | `docs/static/`           | `logo.svg`, `logo-dark.svg`, `favicon.svg`, `social.png`, and anything the guide links |
 | `wrangler.jsonc`         | The Worker `baskingspot-dev-NAME`, assets `./zig-out/site`, no routes                  |
 
@@ -30,6 +32,42 @@ The theme owns `style.css`, `badge.svg`, and the templates. A file of the same n
 The repository's root `CHANGELOG.md` is copied into the site as `/NAME/changelog/` for the build and removed afterwards, so the changelog is written once and the site shows it. The copy drops the Keep a Changelog preamble, drops an `Unreleased` section with no entries, and turns each `## [X.Y.Z] - DATE` heading into `## X.Y.Z - DATE`, which the theme makes an anchored heading.
 
 Add `docs/themes/` to `.gitignore`. It holds a link the command makes.
+
+## An API reference
+
+`api = true` in `[extra]` adds the header link. The page itself is the theme's
+`api.html`, rendered from `docs/data/api.json`:
+
+- `docs/data/api.json` is the document docgen writes, schema version 1. Zola
+  reads `data/` at build time and does not publish it, so the JSON is never
+  served next to the page. A schema version other than 1 renders a visible
+  warning, not a build failure.
+- `docs/content/api.md` is the page entry. It needs frontmatter with a `title`
+  and `template = "api.html"`, plus a short body. The template renders the
+  whole reference from the JSON and never reads `page.content`, so the body
+  exists only for the markdown twin (see below).
+
+Generate the JSON from the repository being documented, with docgen built:
+
+```sh
+../docgen/zig-out/bin/docgen \
+  --root src/root.zig \
+  --out docs/data \
+  --format json \
+  --title NAME \
+  --repo-url https://github.com/baskingspot/NAME \
+  --rev main
+```
+
+A `zig build docs` step can run the same command instead; `--out` is the
+directory that receives `api.json`. The theme renders the symbols in document
+order, makes `fqn` the anchor, builds source links only when `repo_url` is set,
+and demotes headings inside doc comments below the symbol's own heading. Doc
+comments stay raw markdown in the JSON.
+
+The body in `content/api.md` is the only text the markdown twin has. Keep it a
+short summary, not a second reference. If it is empty, the twin is just the H1
+from the title, which advertises nothing.
 
 ## The markdown copy
 
