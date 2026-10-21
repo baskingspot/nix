@@ -57,6 +57,9 @@
               docs
               shell
             ];
+            # The docs theme ships one script. Consumers serve it as a static
+            # file; only this repo lints it.
+            packages = [ pkgs.oxlint ];
           };
         };
     };

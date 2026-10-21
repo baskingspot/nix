@@ -2,7 +2,8 @@
 
 {% block title %}{{ page.title }} · {{ config.title }}{% endblock %}
 {% block body_class %}api-body{% endblock %}
-{% block head %}<link rel="stylesheet" href="{{ get_url(path='api.css') }}">{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ get_url(path='api.css') }}">
+<script defer src="{{ get_url(path='api.js') }}"></script>{% endblock %}
 {% block layout_class %} has-api{% endblock %}
 
 {% block toc %}
@@ -23,7 +24,7 @@
 {% block content %}
 {% set api = load_data(path="data/api.json") %}
 {% set package = api.package %}
-<article class="dx-api">
+<article class="dx-api" data-package="{{ package.name }}">
   <h1 class="dx-title">API reference</h1>
   {% if api.schema_version != 1 %}
   <p class="dx-warning">This page was generated with schema version {{ api.schema_version }}; this template reads version 1.</p>
@@ -33,92 +34,9 @@
   {% endif %}
 
   {% for symbol in api.symbols %}
-  {% set anchor = package.name ~ "." ~ symbol.fqn %}
-  {% set src_url = "" %}
-  {% if package.repo_url %}{% set src_url = package.repo_url ~ "/blob/" ~ package.rev ~ "/" ~ symbol.file ~ "#L" ~ symbol.line %}{% endif %}
-  {#- The signature is one line of raw source. Split it once around the name, so
-      the name renders as the anchor link and the rest stays muted. A long
-      constant initializer folds: the heading keeps the declaration up to the
-      "=", and the value goes into a closed details block. -#}
-  {% set sig = symbol.signature %}
-  {% set value = "" %}
-  {% if symbol.kind in ["constant", "variable"] and (sig | length) > 96 and " = " in sig %}
-    {% set sig_head = sig | split(pat=" = ") | first %}
-    {% set value = sig | replace(from=sig_head ~ " = ", to="") %}
-    {% set sig = sig_head ~ " = " %}
-  {% endif %}
-  {% if symbol.kind == "field" %}{% set sep = symbol.name ~ ":" %}{% set pre = "" %}
-  {% elif (" " ~ symbol.name ~ "(") in sig %}{% set sep = " " ~ symbol.name ~ "(" %}{% set pre = " " %}
-  {% elif (" " ~ symbol.name ~ ":") in sig %}{% set sep = " " ~ symbol.name ~ ":" %}{% set pre = " " %}
-  {% elif (" " ~ symbol.name ~ " ") in sig %}{% set sep = " " ~ symbol.name ~ " " %}{% set pre = " " %}
-  {% else %}{% set sep = "" %}{% endif %}
-  {% if sep and sep in sig %}
-    {% set sig_lead = sig | split(pat=sep) | first %}
-    {% set sig_rest = sig | replace(from=sig_lead ~ sep, to="") %}
-    {% set sig_html = sig_lead | escape ~ pre ~ '<a class="dx-name" href="#' ~ anchor ~ '">' ~ symbol.name ~ "</a>" ~ (sep | replace(from=pre ~ symbol.name, to="") | escape) ~ (sig_rest | escape) %}
-  {% else %}
-    {% set sig_html = '<a class="dx-name" href="#' ~ anchor ~ '">' ~ symbol.name ~ "</a> " ~ (sig | escape) %}
-  {% endif %}
-  {% if value %}{% set sig_html = sig_html ~ '<span class="dx-elided">…</span>' %}{% endif %}
-
-  {% if symbol.kind == "field" %}
-  <div class="dx-field dx-d{{ symbol.depth }}" id="{{ anchor }}">
-    <code class="dx-field-sig">{{ sig_html | safe }}</code>
-    {% if symbol.docs %}<div class="dx-field-docs">{{ symbol.docs | markdown | safe }}</div>{% endif %}
-  </div>
-  {% else %}
-  {% set container = symbol.kind in ["module", "struct", "enum", "type_function"] %}
-  <section class="dx-sym dx-d{{ symbol.depth }}{% if container %} dx-container{% endif %}" id="{{ anchor }}">
-    {% if container %}
-    <div class="dx-head">
-      {% if symbol.depth == 0 %}<h2>{% elif symbol.depth == 1 %}<h3>{% else %}<h4>{% endif %}
-        <span class="dx-kind">{% if symbol.kind == "type_function" %}type fn{% else %}{{ symbol.kind }}{% endif %}</span>
-        <a class="dx-name" href="#{{ anchor }}">{{ symbol.name }}</a>
-      {% if symbol.depth == 0 %}</h2>{% elif symbol.depth == 1 %}</h3>{% else %}</h4>{% endif %}
-      {% if src_url %}<a class="dx-src" href="{{ src_url }}">{{ symbol.file }}:{{ symbol.line }}</a>{% endif %}
-    </div>
-    {% if symbol.kind != "module" and (symbol.signature | split(pat=" = ") | last) not in ["struct", "enum", "union", "opaque"] %}<pre class="dx-decl"><code>{{ symbol.signature }}</code></pre>{% endif %}
-    {% else %}
-    <div class="dx-head">
-      {% if symbol.depth <= 1 %}<h3{% else %}<h4{% endif %} class="dx-member"><code>{{ sig_html | safe }}</code>{% if symbol.depth <= 1 %}</h3>{% else %}</h4>{% endif %}
-      {% if src_url %}<a class="dx-src" href="{{ src_url }}">src</a>{% endif %}
-    </div>
-    {% if value %}
-    <details class="dx-value">
-      <summary>value</summary>
-      <pre><code>{{ value }}</code></pre>
-    </details>
-    {% endif %}
-    {% endif %}
-    {% if symbol.docs %}
-    {% set dx_h2 = symbol.depth + 3 %}
-    {% set dx_h3 = symbol.depth + 4 %}
-    {% set dx_h4 = symbol.depth + 5 %}
-    {% if dx_h4 > 6 %}{% set dx_h4 = 6 %}{% endif %}
-    {% if dx_h3 > 6 %}{% set dx_h3 = 6 %}{% endif %}
-    {% if dx_h2 > 6 %}{% set dx_h2 = 6 %}{% endif %}
-    {% set dx_docs = symbol.docs | markdown
-      | replace(from="</h4", to="</h" ~ dx_h4)
-      | replace(from="<h4", to="<h" ~ dx_h4)
-      | replace(from="</h3", to="</h" ~ dx_h3)
-      | replace(from="<h3", to="<h" ~ dx_h3)
-      | replace(from="</h2", to="</h" ~ dx_h2)
-      | replace(from="<h2", to="<h" ~ dx_h2)
-      | replace(from="</h1", to="</h" ~ dx_h2)
-      | replace(from="<h1", to="<h" ~ dx_h2) %}
-    {#- Long docs fold after the first paragraph, so the page scans as a list
-        of summaries. A browser's find-in-page still searches closed details. -#}
-    {% set dx_lead = dx_docs | split(pat="</p>") | first %}
-    {% set dx_more = dx_docs | replace(from=dx_lead ~ "</p>", to="") | trim %}
-    {% if (dx_lead | truncate(length=3, end="")) == "<p>" and (dx_more | length) > 320 %}
-    <div class="dx-docs">{{ dx_lead | safe }}</p>
-      <details class="dx-more"><summary>more</summary>{{ dx_more | safe }}</details>
-    </div>
-    {% else %}
-    <div class="dx-docs">{{ dx_docs | safe }}</div>
-    {% endif %}
-    {% endif %}
-  </section>
+  {% if symbol.depth == 0 %}
+  {% if symbol.kind in ["field", "function", "constant", "variable"] %}{{<dx.member symbol={symbol} package={package} />}}
+  {% else %}{{<dx.container symbol={symbol} symbols={api.symbols} package={package} />}}{% endif %}
   {% endif %}
   {% endfor %}
 </article>

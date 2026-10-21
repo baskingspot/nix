@@ -5,13 +5,14 @@
 default:
     @just --list
 
-[doc("Check Nix, shell, the theme's CSS, Markdown, the justfile, and the workflows")]
+[doc("Check Nix, shell, the theme's CSS and JS, Markdown, the justfile, and the workflows")]
 [group("lint")]
 lint:
     nix fmt -- --ci
     shfmt -d modules/docs-cli.sh
     shellcheck modules/docs-cli.sh
-    oxfmt --check README.md AGENTS.md docs/README.md docs/theme/static/style.css docs/theme/static/api.css .github
+    oxfmt --check README.md AGENTS.md docs/README.md docs/theme/static/style.css docs/theme/static/api.css docs/theme/static/api.js .github
+    oxlint --deny-warnings docs/theme/static/api.js
     actionlint
     zizmor .
     just --fmt --check
@@ -21,7 +22,7 @@ lint:
 fmt:
     nix fmt
     shfmt -w modules/docs-cli.sh
-    oxfmt README.md AGENTS.md docs/README.md docs/theme/static/style.css docs/theme/static/api.css .github
+    oxfmt README.md AGENTS.md docs/README.md docs/theme/static/style.css docs/theme/static/api.css docs/theme/static/api.js .github
     just --fmt
 
 [doc("Evaluate every flake output, build every devshell, and run the Nix lint as a flake check")]
@@ -45,7 +46,8 @@ test-docs:
     # Byte for byte, so the CSS the fixture serves is the checkout's theme file.
     cmp -s docs/theme/static/style.css "$out/fixture/style.css"
     cmp -s docs/theme/static/api.css "$out/fixture/api.css"
-    for f in index.html style.css api.css badge.svg logo.svg social.png; do test -s "$out/fixture/$f"; done
+    cmp -s docs/theme/static/api.js "$out/fixture/api.js"
+    for f in index.html style.css api.css api.js badge.svg logo.svg social.png; do test -s "$out/fixture/$f"; done
     grep -q 'href="https://baskingspot.dev/fixture/style.css"' "$out/fixture/index.html"
     grep -q 'View on GitHub' "$out/fixture/index.html"
     grep -q 'class="layout has-toc"' "$out/fixture/index.html"
@@ -61,6 +63,7 @@ test-docs:
     ! grep -Eq '(href|src|srcset)="/[^/]' "$api"
     grep -q 'href="https://baskingspot.dev/fixture/style.css"' "$api"
     grep -q 'dx-nav' "$out/fixture/api.css"
+    grep -q 'src="https://baskingspot.dev/fixture/api.js"' "$api"
     # data/ is a Zola input, not a published path.
     test ! -e "$out/fixture/data/api.json"
     # The markdown twin: an H1 from the title, no TOML frontmatter, and the

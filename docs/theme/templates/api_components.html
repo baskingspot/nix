@@ -1,0 +1,126 @@
+{#- The API page's item shapes, as Tera components: Zola 0.23 runs Tera 2,
+    which has no macros. Components register globally, so api.html calls
+    them without an import. A symbol is one of three: a field (a row), a
+    member (a function or a constant, whose heading is its signature), or a
+    container (a module or a type, which holds the other two in groups). -#}
+
+{#- The signature is one line of raw source. Split it once around the name, so
+    the name renders as the anchor link and the rest stays muted. -#}
+{% component dx.sig(symbol: map, anchor: string, text: string) %}
+{%- if symbol.kind == "field" %}{% set sep = symbol.name ~ ":" %}{% set pre = "" %}
+{%- elif (" " ~ symbol.name ~ "(") in text %}{% set sep = " " ~ symbol.name ~ "(" %}{% set pre = " " %}
+{%- elif (" " ~ symbol.name ~ ":") in text %}{% set sep = " " ~ symbol.name ~ ":" %}{% set pre = " " %}
+{%- elif (" " ~ symbol.name ~ " ") in text %}{% set sep = " " ~ symbol.name ~ " " %}{% set pre = " " %}
+{%- else %}{% set sep = "" %}{% set pre = "" %}{% endif %}
+{%- if sep and sep in text %}
+{%- set lead = text | split(pat=sep) | first %}
+{%- set rest = text | replace(from=lead ~ sep, to="") %}
+{{- lead }}{{ pre }}<a class="dx-name" href="#{{ anchor }}">{{ symbol.name }}</a>{{ sep | replace(from=pre ~ symbol.name, to="") }}{{ rest }}
+{%- else %}<a class="dx-name" href="#{{ anchor }}">{{ symbol.name }}</a> {{ text }}{% endif %}
+{%- endcomponent dx.sig %}
+
+{#- Docs headings shift under the symbol's own heading. Long docs fold after
+    the first paragraph, so the page scans as a list of summaries. A browser's
+    find-in-page still searches a closed details. -#}
+{% component dx.docs(symbol: map) %}
+{%- set h2 = symbol.depth + 3 %}{% if h2 > 6 %}{% set h2 = 6 %}{% endif %}
+{%- set h3 = symbol.depth + 4 %}{% if h3 > 6 %}{% set h3 = 6 %}{% endif %}
+{%- set h4 = symbol.depth + 5 %}{% if h4 > 6 %}{% set h4 = 6 %}{% endif %}
+{%- set html = symbol.docs | markdown
+  | replace(from="</h4", to="</h" ~ h4)
+  | replace(from="<h4", to="<h" ~ h4)
+  | replace(from="</h3", to="</h" ~ h3)
+  | replace(from="<h3", to="<h" ~ h3)
+  | replace(from="</h2", to="</h" ~ h2)
+  | replace(from="<h2", to="<h" ~ h2)
+  | replace(from="</h1", to="</h" ~ h2)
+  | replace(from="<h1", to="<h" ~ h2) %}
+{%- set lead = html | split(pat="</p>") | first %}
+{%- set more = html | replace(from=lead ~ "</p>", to="") | trim %}
+{%- if (lead | truncate(length=3, end="")) == "<p>" and (more | length) > 320 %}
+<div class="dx-docs">{{ lead | safe }}</p>
+  <details class="dx-more"><summary>more</summary>{{ more | safe }}</details>
+</div>
+{%- else %}
+<div class="dx-docs">{{ html | safe }}</div>
+{%- endif %}
+{%- endcomponent dx.docs %}
+
+{% component dx.src(symbol: map, package: map, label: string) %}
+{%- if package.repo_url %}<a class="dx-src" href="{{ package.repo_url ~ "/blob/" ~ package.rev ~ "/" ~ symbol.file ~ "#L" ~ symbol.line }}">{{ label }}</a>{% endif %}
+{%- endcomponent dx.src %}
+
+{% component dx.field(symbol: map, package: map) %}
+{%- set anchor = package.name ~ "." ~ symbol.fqn %}
+<div class="dx-field" id="{{ anchor }}">
+  <code class="dx-field-sig">{{<dx.sig symbol={symbol} anchor={anchor} text={symbol.signature} />}}</code>
+  {% if symbol.docs %}<div class="dx-field-docs">{{ symbol.docs | markdown | safe }}</div>{% endif %}
+</div>
+{%- endcomponent dx.field %}
+
+{#- A long constant initializer folds: the heading keeps the declaration up to
+    the "=", and the value goes into a closed details. -#}
+{% component dx.member(symbol: map, package: map) %}
+{%- set anchor = package.name ~ "." ~ symbol.fqn %}
+{%- set text = symbol.signature %}
+{%- set value = "" %}
+{%- if symbol.kind in ["constant", "variable"] and ((text | length) > 96 or "\n" in text) and " = " in text %}
+{%- set head = text | split(pat=" = ") | first %}
+{%- set value = text | replace(from=head ~ " = ", to="") %}
+{%- set text = head ~ " = " %}
+{%- endif %}
+<section class="dx-member" id="{{ anchor }}">
+  <div class="dx-head">
+    <h4><code>{{<dx.sig symbol={symbol} anchor={anchor} text={text} />}}{% if value %}<span class="dx-elided">…</span>{% endif %}</code></h4>
+    {{<dx.src symbol={symbol} package={package} label="src" />}}
+  </div>
+  {% if value %}
+  <details class="dx-value"><summary>value</summary><pre><code>{{ value }}</code></pre></details>
+  {% endif %}
+  {% if symbol.docs %}{{<dx.docs symbol={symbol} />}}{% endif %}
+</section>
+{%- endcomponent dx.member %}
+
+{#- A container is a details, open by default, so a type folds to its title.
+    Its children render in groups, in source order within each group. -#}
+{% component dx.container(symbol: map, symbols: array, package: map) %}
+{%- set anchor = package.name ~ "." ~ symbol.fqn %}
+{%- set kids = [k for k in symbols if k.parent == symbol.fqn] %}
+{%- set fields = [k for k in kids if k.kind == "field"] %}
+{%- set constants = [k for k in kids if k.kind in ["constant", "variable"]] %}
+{%- set functions = [k for k in kids if k.kind == "function"] %}
+{%- set types = [k for k in kids if k.kind not in ["field", "constant", "variable", "function"]] %}
+<section class="dx-type dx-d{{ symbol.depth }}" id="{{ anchor }}">
+<details open>
+  <summary class="dx-head">
+    {% if symbol.depth == 0 %}<h2>{% elif symbol.depth == 1 %}<h3>{% else %}<h4>{% endif %}
+      <span class="dx-kind">{% if symbol.kind == "type_function" %}type fn{% else %}{{ symbol.kind }}{% endif %}</span>
+      <a class="dx-name" href="#{{ anchor }}">{{ symbol.name }}</a>
+    {% if symbol.depth == 0 %}</h2>{% elif symbol.depth == 1 %}</h3>{% else %}</h4>{% endif %}
+    {{<dx.src symbol={symbol} package={package} label={symbol.file ~ ":" ~ symbol.line} />}}
+  </summary>
+  {% if symbol.kind != "module" and (symbol.signature | split(pat=" = ") | last) not in ["struct", "enum", "union", "opaque"] %}
+  <pre class="dx-decl"><code>{{ symbol.signature }}</code></pre>
+  {% endif %}
+  {% if symbol.docs %}{{<dx.docs symbol={symbol} />}}{% endif %}
+  {% if fields %}
+  <p class="dx-group">Fields</p>
+  <div class="dx-fields">
+  {% for kid in fields %}{{<dx.field symbol={kid} package={package} />}}{% endfor %}
+  </div>
+  {% endif %}
+  {% if constants %}
+  <p class="dx-group">Constants</p>
+  {% for kid in constants %}{{<dx.member symbol={kid} package={package} />}}{% endfor %}
+  {% endif %}
+  {% if functions %}
+  <p class="dx-group">Functions</p>
+  {% for kid in functions %}{{<dx.member symbol={kid} package={package} />}}{% endfor %}
+  {% endif %}
+  {% if types %}
+  <p class="dx-group">Types</p>
+  {% for kid in types %}{{<dx.container symbol={kid} symbols={symbols} package={package} />}}{% endfor %}
+  {% endif %}
+</details>
+</section>
+{%- endcomponent dx.container %}
