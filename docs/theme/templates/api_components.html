@@ -46,8 +46,9 @@
 {%- endif %}
 {%- endcomponent dx.docs %}
 
-{% component dx.src(symbol: map, package: map, label: string) %}
-{%- if package.repo_url %}<a class="dx-src" href="{{ package.repo_url ~ "/blob/" ~ package.rev ~ "/" ~ symbol.file ~ "#L" ~ symbol.line }}">{{ label }}</a>{% endif %}
+{#- Every source link reads "src". The path and line are in its title. -#}
+{% component dx.src(symbol: map, package: map) %}
+{%- if package.repo_url %}<a class="dx-src" href="{{ package.repo_url ~ "/blob/" ~ package.rev ~ "/" ~ symbol.file ~ "#L" ~ symbol.line }}" title="{{ symbol.file }}:{{ symbol.line }}">src</a>{% endif %}
 {%- endcomponent dx.src %}
 
 {% component dx.field(symbol: map, package: map) %}
@@ -72,7 +73,7 @@
 <section class="dx-member" id="{{ anchor }}">
   <div class="dx-head">
     <h4><code>{{<dx.sig symbol={symbol} anchor={anchor} text={text} />}}{% if value %}<span class="dx-elided">…</span>{% endif %}</code></h4>
-    {{<dx.src symbol={symbol} package={package} label="src" />}}
+    {{<dx.src symbol={symbol} package={package} />}}
   </div>
   {% if value %}
   <details class="dx-value"><summary>value</summary><pre><code>{{ value }}</code></pre></details>
@@ -97,7 +98,7 @@
       <span class="dx-kind">{% if symbol.kind == "type_function" %}type fn{% else %}{{ symbol.kind }}{% endif %}</span>
       <a class="dx-name" href="#{{ anchor }}">{{ symbol.name }}</a>
     {% if symbol.depth == 0 %}</h2>{% elif symbol.depth == 1 %}</h3>{% else %}</h4>{% endif %}
-    {{<dx.src symbol={symbol} package={package} label={symbol.file ~ ":" ~ symbol.line} />}}
+    {{<dx.src symbol={symbol} package={package} />}}
   </summary>
   {% if symbol.kind != "module" and (symbol.signature | split(pat=" = ") | last) not in ["struct", "enum", "union", "opaque"] %}
   <pre class="dx-decl"><code>{{ symbol.signature }}</code></pre>
