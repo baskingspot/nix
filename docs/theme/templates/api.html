@@ -8,13 +8,11 @@
 
 {% block toc %}
 {% set api = load_data(path="data/api.json") %}
-<nav class="dx-nav" aria-label="Symbols">
+<nav class="dx-nav" aria-label="Modules">
   <ul>
     {% for symbol in api.symbols %}
     {% if symbol.depth == 0 %}
     <li class="dx-nav-mod"><a href="#{{ api.package.name }}.{{ symbol.fqn }}">{{ symbol.name }}</a></li>
-    {% elif symbol.depth == 1 %}
-    <li class="dx-nav-child"><a href="#{{ api.package.name }}.{{ symbol.fqn }}">{{ symbol.name }}</a></li>
     {% endif %}
     {% endfor %}
   </ul>

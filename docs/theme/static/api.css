@@ -25,8 +25,12 @@ body.api-body {
   max-width: 70rem;
 }
 
-.dx-title {
-  margin: 0 0 1rem;
+/* The top padding matches the sidebar's, so the title clears the header rule
+   and lines up with the filter box. Two classes, to outrank style.css's
+   h1:first-child, which zeroes the padding. */
+.dx-api > .dx-title {
+  margin: 0 0 0.5rem;
+  padding-top: 1rem;
   font-size: 1.6rem;
   letter-spacing: -0.02em;
 }
@@ -328,7 +332,7 @@ body.api-body {
 }
 
 .dx-nav li {
-  margin: 0.08rem 0;
+  margin: 0.2rem 0;
 }
 
 .dx-nav a {
@@ -342,16 +346,11 @@ body.api-body {
 
 .dx-nav-mod > a {
   color: var(--fg);
-  font-weight: 600;
-}
-
-.dx-nav-child {
-  padding-left: 0.85rem;
 }
 
 /* The parts api.js adds. Without the script, none of them exist. */
 .dx-toggle {
-  margin: 0 0 1rem;
+  margin: 0 0 0.75rem;
   padding: 0;
   color: var(--muted);
   font:
@@ -406,10 +405,6 @@ body.api-body {
   .dx-nav {
     position: static;
     max-height: none;
-  }
-
-  .dx-nav-child {
-    display: none;
   }
 
   .dx-field {
