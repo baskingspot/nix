@@ -36,6 +36,11 @@ main {
   max-width: 46rem;
 }
 
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 /* A contents sidebar on wide screens; on narrow ones it flows above the page,
    with only the chapter titles. The API page lays itself out in api.css. */
 .layout {
