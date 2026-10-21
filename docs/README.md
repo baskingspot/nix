@@ -47,10 +47,12 @@ Add `docs/themes/` to `.gitignore`. It holds a link the command makes.
   whole reference from the JSON and never reads `page.content`, so the body
   exists only for the markdown twin (see below).
 
-Generate the JSON from the repository being documented, with docgen built:
+The `baskingspot` flake's `docs` devshell provides `docgen` and
+`baskingspot-docs`. Generate the JSON first; `--out` is the directory that
+receives `api.json`:
 
 ```sh
-../docgen/zig-out/bin/docgen \
+docgen \
   --root src/root.zig \
   --out docs/data \
   --format json \
@@ -59,11 +61,13 @@ Generate the JSON from the repository being documented, with docgen built:
   --rev main
 ```
 
-A `zig build docs` step can run the same command instead; `--out` is the
-directory that receives `api.json`. The theme renders the symbols in document
-order, makes `fqn` the anchor, builds source links only when `repo_url` is set,
-and demotes headings inside doc comments below the symbol's own heading. Doc
-comments stay raw markdown in the JSON.
+The repo's `just doc` recipe runs that command and then
+`baskingspot-docs build NAME`. The theme renders the symbols in document order,
+makes `package.name + "." + fqn` the anchor (`#stdx.base32`), builds source
+links only when `repo_url` is set, and demotes headings inside doc comments
+below the symbol's own heading. The sidebar lists modules and their direct
+members; the page itself is the full reference. Doc comments stay raw markdown
+in the JSON.
 
 The body in `content/api.md` is the only text the markdown twin has. Keep it a
 short summary, not a second reference. If it is empty, the twin is just the H1

@@ -22,7 +22,7 @@
   <meta name="twitter:card" content="summary_large_image">
   {% block head %}{% endblock %}
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
   <header>
     <a class="site" href="{{ get_url(path='/') }}">
       <picture>
