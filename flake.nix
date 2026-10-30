@@ -61,6 +61,20 @@
             # file; only this repo lints it.
             packages = [ pkgs.oxlint ];
           };
+
+          # Every shared rule carries valid and invalid cases. The check runs
+          # them from a writable copy, because ast-grep test wants a checkout.
+          checks.ast-grep-rules =
+            pkgs.runCommand "check-ast-grep-rules"
+              {
+                nativeBuildInputs = [ pkgs.ast-grep ];
+              }
+              ''
+                cp -r ${./pkgs/ast-grep-rules} src
+                cd src
+                ast-grep test --skip-snapshot-tests
+                touch $out
+              '';
         };
     };
 }

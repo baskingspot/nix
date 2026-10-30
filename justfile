@@ -30,6 +30,11 @@ fmt:
 check:
     nix flake check
 
+[doc("Test the shared ast-grep rules against their valid and invalid cases")]
+[group("test")]
+test-rules:
+    cd pkgs/ast-grep-rules && ast-grep test --skip-snapshot-tests
+
 [doc("Build the fixture site on the docs theme and check its output, the way a library's doc recipe does")]
 [group("test")]
 test-docs:

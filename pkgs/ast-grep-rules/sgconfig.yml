@@ -1,0 +1,7 @@
+# The config the rules are developed and tested against. Consumers do not read
+# it: `baskingspot-lint` runs each rule by path, because ast-grep takes one
+# config and ruleDirs resolve relative to it.
+ruleDirs:
+  - rules
+testConfigs:
+  - testDir: tests

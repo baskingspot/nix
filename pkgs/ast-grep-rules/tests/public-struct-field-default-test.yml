@@ -1,0 +1,51 @@
+id: public-struct-field-default
+valid:
+  # A private struct may default its fields.
+  - |
+    const Private = struct {
+        a: u32 = 1,
+    };
+  # A public struct with every field required is the shape the rule wants.
+  - |
+    pub const Ok = struct {
+        a: u32,
+        b: bool,
+
+        pub const init: Ok = .{ .a = 0, .b = false };
+    };
+  # A private type function may return a struct with defaults.
+  - |
+    fn Private(comptime n: usize) type {
+        return struct {
+            a: u32 = 1,
+        };
+    };
+  # A nested private struct is not the public struct's own field.
+  - |
+    pub const Outer = struct {
+        a: u32,
+        const Nested = struct {
+            b: u32 = 1,
+        };
+    };
+  # A module file has no root fields.
+  - |
+    pub const thing = 1;
+invalid:
+  # A public struct with a defaulted field.
+  - |
+    pub const Bad = struct {
+        a: u32 = 1,
+        b: bool,
+    };
+  # The struct a public type function returns.
+  - |
+    pub fn Container(comptime n: usize) type {
+        return struct {
+            a: u32 = 0,
+        };
+    }
+  # A struct written as a file: the top-level fields are its fields.
+  - |
+    next_ms: u64 = 0,
+    interval: u32,

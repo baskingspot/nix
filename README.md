@@ -28,7 +28,7 @@ Nix has no `nix lint`. The closest standard is `nix fmt`, so `base` puts the Nix
 
 `nix fmt` touches `*.nix` and nothing else. Every other language stays with its own toolchain, run from the repo's justfile: `zig fmt` and `ziglint`, `oxfmt` for Markdown, `actionlint` and `zizmor` for workflows, and `just --fmt`.
 
-The house rules are ast-grep rules under `pkgs/ast-grep-rules/rules/`, one directory per language. `baskingspot-lint src` runs all of them, then any in the repo's own `.ast-grep/rules/`. A rule that applies to every repo is added here once; a repo runs the same command with no other change.
+The house rules are ast-grep rules under `pkgs/ast-grep-rules/rules/`, one directory per language. `baskingspot-lint src` runs all of them, then any in the repo's own `.ast-grep/rules/`. A rule that applies to every repo is added here once; a repo runs the same command with no other change. Each rule carries valid and invalid Zig cases in `pkgs/ast-grep-rules/tests/`; `just test-rules` runs them, and `nix flake check` runs the same test in CI.
 
 ## Use
 
