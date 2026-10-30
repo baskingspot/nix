@@ -9,8 +9,8 @@ default:
 [group("lint")]
 lint:
     nix fmt -- --ci
-    shfmt -d modules/docs-cli.sh
-    shellcheck modules/docs-cli.sh
+    shfmt -d modules/docs-cli.sh pkgs/baskingspot-lint/baskingspot-lint.sh
+    shellcheck modules/docs-cli.sh pkgs/baskingspot-lint/baskingspot-lint.sh
     oxfmt --check README.md AGENTS.md docs/README.md docs/theme/static/style.css docs/theme/static/api.css docs/theme/static/api.js .github
     oxlint --deny-warnings docs/theme/static/api.js
     actionlint
@@ -21,7 +21,7 @@ lint:
 [group("lint")]
 fmt:
     nix fmt
-    shfmt -w modules/docs-cli.sh
+    shfmt -w modules/docs-cli.sh pkgs/baskingspot-lint/baskingspot-lint.sh
     oxfmt README.md AGENTS.md docs/README.md docs/theme/static/style.css docs/theme/static/api.css docs/theme/static/api.js .github
     just --fmt
 

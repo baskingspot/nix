@@ -11,6 +11,12 @@
 
   perSystem =
     { pkgs, config, ... }:
+    let
+      astGrepRules = pkgs.callPackage ../pkgs/ast-grep-rules { };
+      baskingspotLint = pkgs.callPackage ../pkgs/baskingspot-lint {
+        rules = astGrepRules;
+      };
+    in
     {
       # `nix fmt` handles Nix files and nothing else. Every other language is
       # formatted and linted by its own toolchain, through the repo's justfile.
@@ -30,9 +36,15 @@
       # Every repo is a GitHub repo, so the workflow tools are here too. The
       # repo's justfile runs actionlint and zizmor, and pins with pinact.
       # oxfmt formats the Markdown and the workflow YAML in every repo's lint.
+      # `baskingspot-lint` carries the shared ast-grep house rules; a repo runs
+      # it on its sources and keeps only its own opinions in .ast-grep/rules.
+      packages.ast-grep-rules = astGrepRules;
+      packages.baskingspot-lint = baskingspotLint;
       devShells.base = pkgs.mkShell {
         packages = with pkgs; [
           actionlint
+          ast-grep
+          baskingspotLint
           fd
           gh
           just

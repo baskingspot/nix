@@ -1,0 +1,39 @@
+id: public-struct-field-default
+language: zig
+severity: error
+message: A public struct names its constructor and requires every field.
+note: |-
+  A field default lets a bare `.{}` or a partial literal compile, so a call
+  site depends on a value that is written nowhere it can be seen. Require the
+  fields and add `pub const init`/`empty`/`zero` with the defaults spelled out
+  (AGENTS.md, "Constructors are named").
+
+  Comptime config is the exception: a Config/Options struct that a caller
+  passes to a type constructor or a comptime parameter keeps its defaults.
+  Suppress the rule on that struct with
+  `// ast-grep-ignore: public-struct-field-default -- why`.
+rule:
+  any:
+    # `pub const Name = struct { ... }`.
+    - kind: struct_declaration
+      inside:
+        kind: variable_declaration
+        pattern: pub const $NAME = struct { $$$BODY };
+      has:
+        pattern: '$F: $T = $D'
+        stopBy: neighbor
+    # The struct a public type function returns.
+    - kind: struct_declaration
+      inside:
+        kind: return_expression
+        inside:
+          pattern: pub fn $NAME($$$PARAMS) type { $$$BODY }
+          stopBy: end
+      has:
+        pattern: '$F: $T = $D'
+        stopBy: neighbor
+    # A struct written as a file: the top-level fields are its fields.
+    - kind: container_field
+      pattern: '$F: $T = $D'
+      inside:
+        kind: source_file

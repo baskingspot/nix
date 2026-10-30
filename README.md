@@ -11,7 +11,7 @@ Every baskingspot repo needs the same flake skeleton and the same tools. This re
 
 ## Modules
 
-- `base`: the three supported systems, and `nix fmt` through treefmt, for Nix files only. It formats with `nixfmt` and fixes with `statix` and `deadnix`. The devshell has `treefmt`, `just`, `fd`, `gh`, `oxfmt` (it formats the Markdown and the workflows in every repo's lint), and the workflow tools `actionlint`, `zizmor`, and `pinact`, because every repo is a GitHub repo.
+- `base`: the three supported systems, and `nix fmt` through treefmt, for Nix files only. It formats with `nixfmt` and fixes with `statix` and `deadnix`. The devshell has `treefmt`, `just`, `fd`, `gh`, `oxfmt` (it formats the Markdown and the workflows in every repo's lint), and the workflow tools `actionlint`, `zizmor`, and `pinact`, because every repo is a GitHub repo. It also has `ast-grep` and `baskingspot-lint`, which runs the house rules.
 - `terraform`: OpenTofu and `tflint`. `tofu fmt` formats, and `tflint` and `tofu validate` check.
 - `shell`: `shellcheck` and `shfmt`. Shell scripts are always checked.
 - `docker`: the Docker CLI with buildx, and `hadolint`. Dockerfiles are always checked. The daemon is not in the shell.
@@ -27,6 +27,8 @@ Nix has no `nix lint`. The closest standard is `nix fmt`, so `base` puts the Nix
 - `nix flake check` runs the same check.
 
 `nix fmt` touches `*.nix` and nothing else. Every other language stays with its own toolchain, run from the repo's justfile: `zig fmt` and `ziglint`, `oxfmt` for Markdown, `actionlint` and `zizmor` for workflows, and `just --fmt`.
+
+The house rules are ast-grep rules under `pkgs/ast-grep-rules/rules/`, one directory per language. `baskingspot-lint src` runs all of them, then any in the repo's own `.ast-grep/rules/`. A rule that applies to every repo is added here once; a repo runs the same command with no other change.
 
 ## Use
 
