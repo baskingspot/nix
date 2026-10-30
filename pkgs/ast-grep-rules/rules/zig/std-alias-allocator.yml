@@ -1,0 +1,15 @@
+id: std-alias-allocator
+language: zig
+severity: error
+message: Alias the allocator type; use bare `Allocator`.
+note: |-
+  Add `const Allocator = std.mem.Allocator;` beside the other aliases, and use
+  `Allocator` at the use site.
+rule:
+  kind: field_expression
+  regex: '^std\.mem\.Allocator$'
+  not:
+    inside:
+      kind: variable_declaration
+      regex: '=\s*std\.mem\.Allocator\s*;'
+      stopBy: end

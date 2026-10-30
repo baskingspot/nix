@@ -1,0 +1,8 @@
+id: std-alias-testing
+valid:
+  - |
+    const testing = std.testing;
+    testing.expect(true);
+invalid:
+  - |
+    std.testing.expect(true);

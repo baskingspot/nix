@@ -1,0 +1,9 @@
+id: no-c-pointer-types
+valid:
+  - |
+    const p: [*]u8 = undefined;
+  - |
+    const q: []const u8 = "";
+invalid:
+  - |
+    const p: [*c]u8 = undefined;

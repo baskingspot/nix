@@ -1,0 +1,10 @@
+id: io-method-form
+language: zig
+severity: error
+message: Use the Io method form, not the free function with the handle.
+note: |-
+  `Io.sleep(io, ...)` is `io.sleep(...)`. The handle is the receiver, not an
+  argument.
+rule:
+  kind: call_expression
+  regex: '^(std\.)?Io\.(random|randomSecure|sleep|futexWait|futexWaitTimeout|futexWaitUncancelable|futexWake)\('

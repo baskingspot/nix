@@ -1,0 +1,10 @@
+id: std-alias-debug-print
+language: zig
+severity: error
+message: Alias the debug printer; use bare `print`.
+note: |-
+  Add `const print = std.debug.print;` beside the other aliases, and call
+  `print(...)`.
+rule:
+  kind: call_expression
+  regex: '^std\.debug\.print\('

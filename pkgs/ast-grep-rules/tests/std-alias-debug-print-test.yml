@@ -1,0 +1,8 @@
+id: std-alias-debug-print
+valid:
+  - |
+    const print = std.debug.print;
+    print("x", .{});
+invalid:
+  - |
+    std.debug.print("x", .{});

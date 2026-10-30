@@ -1,0 +1,9 @@
+id: std-alias-io
+language: zig
+severity: error
+message: Alias the Io namespace; use bare `Io`.
+note: |-
+  Add `const Io = std.Io;` beside the other aliases, and use `Io.<member>`.
+rule:
+  kind: field_expression
+  regex: '^std\.Io\.'

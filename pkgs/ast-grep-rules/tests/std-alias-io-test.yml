@@ -1,0 +1,12 @@
+id: std-alias-io
+valid:
+  - |
+    const Io = std.Io;
+    fn f(d: Io.Duration) void {
+        _ = d;
+    }
+invalid:
+  - |
+    fn f(d: std.Io.Duration) void {
+        _ = d;
+    }

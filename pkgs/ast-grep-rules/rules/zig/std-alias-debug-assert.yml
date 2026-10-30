@@ -1,0 +1,10 @@
+id: std-alias-debug-assert
+language: zig
+severity: error
+message: Alias the assertion; use bare `assert`.
+note: |-
+  Add `const assert = std.debug.assert;` beside the other aliases, and call
+  `assert(...)`.
+rule:
+  kind: call_expression
+  regex: '^std\.debug\.assert\('

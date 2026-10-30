@@ -1,0 +1,10 @@
+id: std-alias-testing
+language: zig
+severity: error
+message: Alias the testing namespace; use bare `testing`.
+note: |-
+  Add `const testing = std.testing;` beside the other aliases, and use
+  `testing.<fn>`.
+rule:
+  kind: field_expression
+  regex: '^std\.testing\.'

@@ -1,0 +1,10 @@
+id: no-c-pointer-types
+language: zig
+severity: error
+message: Never write `[*c]T` by hand.
+note: |-
+  `[*c]` exists for C translated by `zig translate-C`. Use `[*]T`, `[]T`, or
+  `[:0]T` instead.
+rule:
+  kind: pointer_type
+  regex: '\[\*c\]'

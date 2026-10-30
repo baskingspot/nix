@@ -1,0 +1,12 @@
+id: std-alias-allocator
+valid:
+  - |
+    const Allocator = std.mem.Allocator;
+    fn f(a: Allocator) void {
+        _ = a;
+    }
+invalid:
+  - |
+    fn f(a: std.mem.Allocator) void {
+        _ = a;
+    }

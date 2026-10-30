@@ -1,0 +1,9 @@
+id: io-method-form
+valid:
+  - |
+    io.sleep(1, .awake);
+  - |
+    try io.random(buffer);
+invalid:
+  - |
+    std.Io.sleep(io, 1, .awake);
