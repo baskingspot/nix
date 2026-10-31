@@ -8,9 +8,10 @@ note: |-
   fields and add `pub const init`/`empty`/`zero` with the defaults spelled out
   (AGENTS.md, "Constructors are named").
 
-  Comptime config is the exception: a Config/Options struct that a caller
-  passes to a type constructor or a comptime parameter keeps its defaults.
-  Suppress the rule on that struct with
+  An options bag is the exception: a Config/Options struct that a caller
+  passes to a function or a type constructor keeps its field defaults, whether
+  the value is comptime or runtime, because the call site overrides one knob
+  and leaves the rest. Suppress the rule on that struct with
   `// ast-grep-ignore: public-struct-field-default -- why`.
 rule:
   any:
