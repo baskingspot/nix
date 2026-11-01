@@ -16,7 +16,7 @@ Every baskingspot repo needs the same flake skeleton and the same tools. This re
 - `shell`: `shellcheck` and `shfmt`. Shell scripts are always checked.
 - `docker`: the Docker CLI with buildx, and `hadolint`. Dockerfiles are always checked. The daemon is not in the shell.
 - `docs`: a docs site on the baskingspot theme: Zola, a pinned `wrangler`, and the command `baskingspot-docs`. It is not a language. See `docs/README.md`.
-- `zig`: Zig, the matching `zls`, `ziglint`, and `zigdoc`. It is a version namespace with `0.16` and `0.17`. A version's shell is `devShells."zig-0-16"` or `devShells."zig-0-17"`, and a repo imports the versions it supports. The dot becomes a hyphen because `nix develop .#zig-0.16` reads the dot as an attrpath separator.
+- `zig`: Zig, the matching `zls`, `ziglint`, and `zigdoc`. It is a version namespace with `0.16` and `0.17`. A version's shell is `devShells."zig-0-16"` or `devShells."zig-0-17"`, and a repo imports the versions it supports. The dot becomes a hyphen because `nix develop .#zig-0.16` reads the dot as an attrpath separator. Each version also exposes `ziglint-0-16` or `ziglint-0-17`, which runs ziglint against that version's standard library; a repo that supports two versions lints with the oldest, so the newer version's deprecations do not fire.
 
 ## Lint
 
