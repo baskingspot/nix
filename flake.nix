@@ -33,7 +33,8 @@
         docs = ./modules/docs.nix;
         shell = ./modules/shell.nix;
         terraform = ./modules/terraform.nix;
-        # A version namespace: consumers import zig."0.16" (exactly one).
+        # A version namespace: import every version the repo supports. Each
+        # one adds devShells."zig-0-16", so the names do not collide.
         zig = {
           "0.16" = zig "0.16";
           "0.17" = zig "0.17";
