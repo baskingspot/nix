@@ -30,8 +30,9 @@
               config.devShells."zig-0-17"
             ];
 
-            # Project-specific tools.
-            packages = with pkgs; [ ];
+            # ziglint reads the 0.16 standard library, so a deprecation that
+            # only 0.17 made does not fire while 0.16 is supported.
+            packages = [ config.packages."ziglint-0-16" ];
           };
 
           devShells.zig-old = pkgs.mkShell {
@@ -40,8 +41,8 @@
               config.devShells."zig-0-16"
             ];
 
-            # Project-specific tools.
-            packages = with pkgs; [ ];
+            # The same wrapper, so one `just lint` works in either shell.
+            packages = [ config.packages."ziglint-0-16" ];
           };
         };
     };
