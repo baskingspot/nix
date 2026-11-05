@@ -38,7 +38,7 @@ Start a new library from the template:
 nix flake init -t github:baskingspot/nix#zig-library
 ```
 
-A library that has to build on the current Zig and on the previous release starts from `zig-library-dual`. It imports both versions, adds a `zig-old` shell, and the `check` recipe the compatibility lane runs:
+A library that has to build on the current Zig and on the previous release starts from `zig-library-dual`. It imports both versions, adds a `zig-old` shell, the `check` recipe the compatibility lane runs, and `ziglint-0-16` in both shells, so the lint follows the older standard library:
 
 ```sh
 nix flake init -t github:baskingspot/nix#zig-library-dual
