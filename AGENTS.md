@@ -14,7 +14,7 @@ The flake is the tool contract. `nix develop` provides every tool, and the `.env
 
 - `flake.nix` exports `flakeModules` and `templates`, and owns this repo's own devshell.
 - `modules/<name>.nix` is one module. Each adds one `devShells.<name>`.
-- `templates/zig-library/` is the flake a new Zig library starts from.
+- `templates/<name>/` is the flake a new Zig library starts from: `zig-library` for one Zig version, `zig-library-dual` for the current and the previous one.
 
 ## Writing a module
 

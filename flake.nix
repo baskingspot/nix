@@ -27,6 +27,11 @@
         description = "A Zig library with the baskingspot devshell";
       };
 
+      flake.templates.zig-library-dual = {
+        path = ./templates/zig-library-dual;
+        description = "A Zig library for two Zig versions, with the devshell for each";
+      };
+
       flake.flakeModules = {
         base = baseModule;
         docker = ./modules/docker.nix;

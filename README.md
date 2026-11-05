@@ -38,6 +38,12 @@ Start a new library from the template:
 nix flake init -t github:baskingspot/nix#zig-library
 ```
 
+A library that has to build on the current Zig and on the previous release starts from `zig-library-dual`. It imports both versions, adds a `zig-old` shell, and the `check` recipe the compatibility lane runs:
+
+```sh
+nix flake init -t github:baskingspot/nix#zig-library-dual
+```
+
 Or add the modules to an existing flake:
 
 ```nix
