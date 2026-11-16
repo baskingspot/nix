@@ -3,21 +3,21 @@
   stdenv,
   callPackage,
   fetchFromGitHub,
-  zig_0_16,
+  zig_0_17,
 }:
 
 let
-  zig = zig_0_16;
+  zig = zig_0_17;
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "docgen";
-  version = "0.0.0-unstable-2026-10-21";
+  version = "0.0.0-unstable-2026-11-15";
 
   src = fetchFromGitHub {
     owner = "baskingspot";
     repo = "docgen";
-    rev = "1cc087b3cc906dd18c020b393eecf2ca37ea96e1";
-    hash = "sha256-V6gWOY9D/JGIwk5UwWy+ZC4Z7qoHt0Rx+KGLFtMHtNI=";
+    rev = "6318476020a620b291e891d557045dc74b67256e";
+    hash = "sha256-ypedgjdfXOwpU53uM8GS4PNSnVRT/3RnsMVv08VmdLU=";
   };
 
   deps = callPackage ./build.zig.zon.nix { };
