@@ -11,13 +11,13 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "docgen";
-  version = "0.0.0-unstable-2026-11-15";
+  version = "0.0.0-unstable-2026-11-23";
 
   src = fetchFromGitHub {
     owner = "baskingspot";
     repo = "docgen";
-    rev = "6318476020a620b291e891d557045dc74b67256e";
-    hash = "sha256-ypedgjdfXOwpU53uM8GS4PNSnVRT/3RnsMVv08VmdLU=";
+    rev = "a195b6038ae1f921ed9898f9efc285c30080e1ce";
+    hash = "sha256-ucH8zxFKDs2Id5bidR9S71DTrLAnRN/+AKgFAfoJIqs=";
   };
 
   deps = callPackage ./build.zig.zon.nix { };
