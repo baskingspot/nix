@@ -23,7 +23,10 @@ out=${BASKINGSPOT_DOCS_OUT:-zig-out/site}/$slug
 # The markdown twin of a page: Zola's TOML frontmatter becomes an H1, and the
 # body follows. Pages are written as markdown and built into HTML, so the twin
 # is the source, not a conversion of the page. `load_data` is expanded, because
-# the code it pulls in is most of what an example reader is after.
+# the code it pulls in is most of what an example reader is after. A Tera raw
+# block is an escape, not a shortcode: the two tag lines come out here, so the
+# reader gets the sample and not Zola's syntax. That also makes the H1 inside
+# the block the page's H1, instead of a second one after the title.
 twin() {
 	awk -v root="$root" '
 		FNR == 1 && $0 == "+++" { front = 1; next }
@@ -37,6 +40,8 @@ twin() {
 			}
 			next
 		}
+		$0 ~ /^[ \t]*\{%[ \t]*raw[ \t]*%\}[ \t]*$/ { next }
+		$0 ~ /^[ \t]*\{%[ \t]*endraw[ \t]*%\}[ \t]*$/ { next }
 		{
 			if (!started) {
 				if ($0 == "") next
@@ -106,7 +111,8 @@ changelog() {
 # Zola builds HTML only, so every page is copied to the path of its URL with
 # index.md in place of index.html. The router serves that file when a request
 # asks for markdown. A shortcode is not expanded in a copy, so it is a warning
-# rather than a silent lie in the twin.
+# rather than a silent lie in the twin. A raw block is not a shortcode: the twin
+# drops its tags, so its contents do not count here.
 twins() {
 	src_root=$root/content
 	[ -d "$src_root" ] || return 0
@@ -119,7 +125,7 @@ twins() {
 		dst=$out/$rel_out
 		mkdir -p "$(dirname "$dst")"
 		twin "$src" >"$dst"
-		if grep -v 'load_data' "$src" | grep -q '{{'; then
+		if sed '/{% raw %}/,/{% endraw %}/d' "$src" | grep -v 'load_data' | grep -q '{{'; then
 			echo "warning: $src uses a shortcode, which the markdown twin cannot render" >&2
 		fi
 	done
