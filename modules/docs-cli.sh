@@ -108,6 +108,19 @@ changelog() {
 	trap 'rm -f "$dst"' EXIT
 }
 
+# The text a shortcode check should look at: everything outside a whole-line
+# Tera raw block. The twin keeps the block's contents, because they are literal
+# markdown, but a `{{` inside one is not a shortcode and must not warn. Only a
+# whole-line tag opens a block here, matching what twin drops; an inline tag is
+# left in place and keeps its warning, because the twin cannot render it.
+strip_raw_blocks() {
+	awk '
+		/^[ \t]*\{%[ \t]*raw[ \t]*%\}[ \t]*$/ { block = 1; next }
+		/^[ \t]*\{%[ \t]*endraw[ \t]*%\}[ \t]*$/ { block = 0; next }
+		!block
+	' "$1"
+}
+
 # Zola builds HTML only, so every page is copied to the path of its URL with
 # index.md in place of index.html. The router serves that file when a request
 # asks for markdown. A shortcode is not expanded in a copy, so it is a warning
@@ -125,7 +138,7 @@ twins() {
 		dst=$out/$rel_out
 		mkdir -p "$(dirname "$dst")"
 		twin "$src" >"$dst"
-		if sed '/{% raw %}/,/{% endraw %}/d' "$src" | grep -v 'load_data' | grep -q '{{'; then
+		if strip_raw_blocks "$src" | grep -v 'load_data' | grep -q '{{'; then
 			echo "warning: $src uses a shortcode, which the markdown twin cannot render" >&2
 		fi
 	done
